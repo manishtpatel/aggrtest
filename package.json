@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --inlineSourceMap --lib ES2015 ./*.ts -w",
+    "build": "tsc -w",
     "start": "node --inspect-brk ./index.js",
     "mongo": "docker run -p 27017:27017 mongo:3.6"
   },
