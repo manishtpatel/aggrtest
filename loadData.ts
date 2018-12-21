@@ -1,7 +1,7 @@
 import * as mongo from 'mongodb'
 
-export const COLLECTION_RESPONSES = "responses"
-export const COLLECTION_PEERGROUPS = "peergroups"
+export const COLLECTION_RESPONSES = "test_responses"
+export const COLLECTION_PEERGROUPS = "test_peergroups"
 
 export const loadData = async (db: mongo.Db) => {
     // Clean slate
@@ -27,4 +27,15 @@ const getPeersDocs = () => {
         { key: '2', peer: "p1", entry: 2 },
         { key: '3', peer: "p2", entry: 3 },
     ]
+}
+
+// LOAD MBM DEV Data
+export const loadData2 = async (db: mongo.Db) => {
+    // Clean slate
+    db.dropCollection(COLLECTION_RESPONSES)
+
+    // Load test data
+    let data = await db.collection('surveyresponses').find({}).toArray()
+
+    db.collection(COLLECTION_RESPONSES).bulkWrite(data)
 }

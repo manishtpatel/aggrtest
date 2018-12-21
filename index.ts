@@ -12,8 +12,8 @@ client.connect(function (err) {
 
     const db = client.db("statstest");
 
-    data.loadData(db).then(async () => {
-        await tests.runTests(db)
+    data.loadData2(db).then(async () => {
+        // await tests.runTests(db)
 
         client.close();
     }).catch((err) => {
