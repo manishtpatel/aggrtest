@@ -6,18 +6,24 @@ let mongoClient = mongo.MongoClient
 
 const client = new mongoClient("mongodb://localhost:27017", { useNewUrlParser: true })
 
-// Use connect method to connect to the Server
-client.connect(function (err) {
-    if (err) throw err
+new Promise(async (resolve, reject) => {
+    try {
+        // Use connect method to connect to the Server
+        await client.connect()
+        const db = client.db("statstest");
 
-    const db = client.db("statstest");
+        // await data.loadData2(client, db)
+        await tests.runTests(db)
 
-    data.loadData2(db).then(async () => {
-        // await tests.runTests(db)
+        client.close()
 
-        client.close();
-    }).catch((err) => {
-        client.close();
+        console.log('done')
+
+        resolve()
+    }
+    catch (err) {
+        reject(err)
+        console.log(err)
         throw err
-    })
-});
+    }
+})

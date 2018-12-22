@@ -30,12 +30,20 @@ const getPeersDocs = () => {
 }
 
 // LOAD MBM DEV Data
-export const loadData2 = async (db: mongo.Db) => {
+export const loadData2 = async (client: mongo.MongoClient, db: mongo.Db) => {
     // Clean slate
     db.dropCollection(COLLECTION_RESPONSES)
 
     // Load test data
-    let data = await db.collection('surveyresponses').find({}).toArray()
+    let data = await client.db('MBMFE_DEV').collection('surveyresponses').find({}).toArray()
 
-    db.collection(COLLECTION_RESPONSES).bulkWrite(data)
+    // answers must be number
+    for (const value of data) {
+        if(value.questionanswer === "") value.questionanswer = -1
+        if(value.questionanswer === "Y") value.questionanswer = 1
+        if(value.questionanswer === "N" ) value.questionanswer = 0
+        if(value.questionanswer.length > 0) value.questionanswer = Number(value.questionanswer)
+    }
+
+    await db.collection(COLLECTION_RESPONSES).insertMany(data)
 }
