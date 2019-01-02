@@ -106,33 +106,35 @@ export const runTests = async (db: mongo.Db) => {
                 all: { $push: "$responses.ans" },
             }
         },
+        // add (f + (c-f)*0.2)
+        // 0.2 (actualmedian - f)
         {
             $addFields: {
-                med: {
-                    $divide: [{
-                        $add: [{
-                            $arrayElemAt: ["$all", { $ceil: { $divide: [{ $size: "$all" }, 2] } }]
-                        }, {
-                            $arrayElemAt: ["$all", { $floor: { $divide: [{ $size: "$all" }, 2] } }]
-                        }]
-                    }, 2],
+                med75: {
+                    $add: [
+                        { $arrayElemAt: ["$all", { $floor: { $multiply: [{ $subtract: [{ $size: "$all" }, 1] }, 0.75] } }] },
+                        {
+                            $multiply: [{
+                                $subtract: [
+                                    { $arrayElemAt: ["$all", { $ceil: { $multiply: [{ $subtract: [{ $size: "$all" }, 1] }, 0.75] } }] },
+                                    { $arrayElemAt: ["$all", { $floor: { $multiply: [{ $subtract: [{ $size: "$all" }, 1] }, 0.75] } }] },
+                                ]
+                            }, {
+                                $subtract: [
+                                    { $multiply: [{ $subtract: [{ $size: "$all" }, 1] }, 0.75]},
+                                    { $floor: { $multiply: [{ $subtract: [{ $size: "$all" }, 1] }, 0.75] } },
+                                ]
+                            }],
+                        }
+                    ]
                 },
-                med_25: {
-                    $divide: [{
-                        $add: [{
-                            $arrayElemAt: ["$all", { $ceil: { $divide: [{ $size: "$all" }, 4] } }]
-                        }, {
-                            $arrayElemAt: ["$all", { $floor: { $divide: [{ $size: "$all" }, 4] } }]
-                        }]
-                    }, 2],
-                }
             },
         },
-        {
-            $project: {
-                "all": -1
-            }
-        },
+        // {
+        //     $project: {
+        //         "all": -1
+        //     }
+        // },
         // {
         //     $group: {
         //         _id: {
