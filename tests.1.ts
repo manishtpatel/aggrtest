@@ -107,7 +107,7 @@ export const runTests = async (db: mongo.Db) => {
             }
         },
         // add (f + (c-f)*0.2)
-        // 0.2 (actualmedian - f)
+        // 0.2 = (actualmedian - f)
         {
             $addFields: {
                 med75: {
