@@ -73,7 +73,7 @@ export const runTests = async (db: mongo.Db) => {
                 _id: {
                     qi: '$responses.q',
                 },
-                count: { $sum: 1 }, // sum of total plans
+                count: { $sum: 1 }, // sum of total plans TODO: not right
                 avg: { $avg: "$responses.a" },
                 all: { $push: "$responses.a" },
                 sum: { $sum: "$responses.a" },

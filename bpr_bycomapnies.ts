@@ -27,6 +27,7 @@ export const runTests = async (db: mongo.Db) => {
         },
         {
             $project: {
+                participantid: true,
                 responses: {
                     $filter: {
                         input: "$responses",
@@ -66,10 +67,12 @@ export const runTests = async (db: mongo.Db) => {
         {
             $group: {
                 _id: {
+                    participantid: '$participantid',
                     qi: '$responses.q',
-                    pl: '$responses.p',
                 },
+                sum: { $sum: "$responses.a" },
                 avg: { $avg: "$responses.a" },
+                plancountperpart: { $sum: 1},
             }
         },
         {
@@ -83,16 +86,17 @@ export const runTests = async (db: mongo.Db) => {
                 _id: {
                     qi: '$_id.qi',
                 },
-                count: { $sum: 1 }, // sum of companies
+                compcount: { $sum: 1 },
+                plancount: { $sum: "$plancountperpart" },
                 avg: { $avg: "$avg" },
                 all: { $push: "$avg" },
                 sum: { $sum: "$avg" },
                 min: { $min: "$avg"},
-                max: { $min: "$max"},
+                max: { $max: "$avg"},
             }
         },
-        // // add (f + (c-f)*0.2)
-        // // 0.2 = (actualmedian - f)
+        // add (f + (c-f)*0.2)
+        // 0.2 = (actualmedian - f)
         {
             $addFields: {
                 med75: {

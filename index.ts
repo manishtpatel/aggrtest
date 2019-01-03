@@ -14,7 +14,7 @@ let exec = new Promise(async (resolve, reject) => {
         await client.connect()
         const db = client.db("MBMFE_DEV");
 
-        await bpr_byplans.runTests(db)
+        // await bpr_byplans.runTests(db)
         await bpr_bycomapnies.runTests(db)
 
         resolve()
