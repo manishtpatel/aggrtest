@@ -4,6 +4,7 @@ export const COLLECTION_RESPONSES = "surveyresponses"
 export const COLLECTION_RESPONSES_TEST = "surveyresponses_agg_test"
 export const COLLECTION_RESPONSES_BYPART_TEST = "surveyresponses_bypart_test"
 export const COLLECTION_PEERGROUPS = "test_peergroups"
+export const COLLECTION_SRESPONSES = "sresponses"
 
 export const loadData = async (db: mongo.Db) => {
     // Clean slate
