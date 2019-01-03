@@ -33,8 +33,27 @@ export const runTests = async (db: mongo.Db) => {
                         as: "response",
                         cond: {
                             $and: [
-                                { $in: ["$$response.qt", [103, 101]] },
-                                { $ne: ["$$response.a", null] }
+                                {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                { $eq: ["$$response.qt", 103] },
+                                                { $ne: ["$$response.a", null] },
+                                            ]
+                                        }, {
+                                            $and: [
+                                                { $eq: ["$$response.qt", 101] },
+                                                { $ne: ["$$response.a", null] },
+                                            ]
+                                        },
+                                    ],
+                                },
+                                {
+                                    $or: [
+                                        { $in: ["EL2", "$$response.s"] },
+                                        { $in: ["EL3", "$$response.s"] },
+                                    ]
+                                }
                             ]
                         }
                     }
@@ -46,18 +65,20 @@ export const runTests = async (db: mongo.Db) => {
         },
         {
             $sort: {
-                'responses.a': 1
+                'responses.a': 1,
             }
         },
         {
             $group: {
                 _id: {
                     qi: '$responses.q',
-                    pl: "$responses.p",
                 },
-                count: { $sum: 1 },
+                count: { $sum: 1 }, // sum of total plans
                 avg: { $avg: "$responses.a" },
                 all: { $push: "$responses.a" },
+                sum: { $sum: "$responses.a" },
+                min: { $min: "$responses.a"},
+                max: { $min: "$responses.a"},
             }
         },
         // // add (f + (c-f)*0.2)
@@ -81,15 +102,15 @@ export const runTests = async (db: mongo.Db) => {
                             }],
                         }
                     ]
-                },
+                }, 
             },
         },
-        {
-            $project: {
-                "all": false
-            }
-        },
-        { $out: "test_aggr_results_sresponses" },
+        // {
+        //     $project: {
+        //         "all": false,
+        //     }
+        // },
+        { $out: "test_bpr_byplans" },
     ], {
             explain: false,
             allowDiskUse: true,
