@@ -90,7 +90,7 @@ export const runTests = async (db: mongo.Db) => {
                 plancount: { $sum: "$plancountperpart" },
                 avg: { $avg: "$avg" },
                 all: { $push: "$avg" },
-                sum: { $sum: "$avg" },
+                sum: { $sum: "$sum" },
                 min: { $min: "$avg"},
                 max: { $max: "$avg"},
             }
